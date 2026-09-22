@@ -2,14 +2,25 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import datetime
 
 
 
 
-url = "https://feeds.bbci.co.uk/news/rss.xml"
 
+url1 = "https://feeds.bbci.co.uk/news/rss.xml"
+url2 = "https://feeds.bbci.co.uk/news/world/rss.xml"
+url3="https://feeds.bbci.co.uk/news/uk/rss.xml"
+url4="https://feeds.bbci.co.uk/news/business/rss.xml"
+url5="https://feeds.bbci.co.uk/news/technology/rss.xml"
+url6="https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+url7="https://feeds.bbci.co.uk/news/health/rss.xml"
+url8="https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+url9="https://feeds.bbci.co.uk/news/politics/rss.xml"
 
-def creat_database() :
+time_now = datetime.datetime.now()
+
+def create_database() :
     conn = sqlite3.connect("news.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -23,12 +34,12 @@ def creat_database() :
         )
     """)
     return cursor,conn
+cursor,conn = create_database()
 
 
 def scraper_news(url):
     blog_feed = feedparser.parse(url)
     content = blog_feed.entries
-    cursor,conn = creat_database()
 
     for entry in content:
 
@@ -43,8 +54,10 @@ def scraper_news(url):
         soup = BeautifulSoup(response.content, "html.parser")
 
         article = soup.find("article")
+        article_date = datetime.datetime(*entry.published_parsed[:6])
 
-        if article:
+
+        if article and time_now - article_date <= datetime.timedelta(days=7):
             paragraphs = article.find_all("p")
 
             body = " ".join(
@@ -72,7 +85,15 @@ def scraper_news(url):
 
         print("-" * 70)
     conn.commit()
-    conn.close()
 
 
-scraper_news(url)
+scraper_news(url1)
+scraper_news(url2)
+scraper_news(url3)
+scraper_news(url4)
+scraper_news(url5)
+scraper_news(url6)
+scraper_news(url7)
+scraper_news(url8)
+scraper_news(url9)
+conn.close()
