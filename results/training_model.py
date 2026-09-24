@@ -6,8 +6,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
-
 import matplotlib.pyplot as plt
+import joblib
 
 
 # =========================
@@ -177,3 +177,18 @@ y_test_pred = model.predict(X_test_tfidf)
 test_accuracy = accuracy_score(y_test, y_test_pred)
 
 print("Final test accuracy =", test_accuracy)
+
+# =========================
+# 12. Train final pipeline
+# =========================
+
+pipeline.fit(X, y)
+
+
+# =========================
+# 13. Save final pipeline
+# =========================
+
+joblib.dump(pipeline, "topic_classifier.pkl")
+
+print("Model saved successfully.")
