@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.model_selection import train_test_split, learning_curve
+from sklearn.model_selection import learning_curve
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+
 import matplotlib.pyplot as plt
 import joblib
 
@@ -22,55 +23,9 @@ y = train["Category"]
 
 
 # =========================
-# 2. Train / Validation split
+# 2. Create Pipeline
 # =========================
-
-X_train, X_val, y_train, y_val = train_test_split(
-    X,
-    y,
-    test_size=0.2,
-    random_state=42,
-    stratify=y
-)
-
-
-# =========================
-# 3. TF-IDF
-# =========================
-
-vectorizer = TfidfVectorizer(
-    ngram_range=(1, 2),
-    stop_words="english"
-)
-
-X_train_tfidf = vectorizer.fit_transform(X_train)
-X_val_tfidf = vectorizer.transform(X_val)
-
-
-# =========================
-# 4. Train Logistic Regression
-# =========================
-
-model = LogisticRegression(max_iter=1000)
-
-model.fit(X_train_tfidf, y_train)
-
-
-# =========================
-# 5. Validation prediction
-# =========================
-
-y_pred = model.predict(X_val_tfidf)
-
-accuracy = accuracy_score(y_val, y_pred)
-
-print("Validation accuracy =", accuracy)
-
-
-# =========================
-# 6. Pipeline for Learning Curve
-# =========================
-
+#  TF-IDF preprocessing &&  LogisticRegression() modul
 pipeline = Pipeline([
     (
         "tfidf",
@@ -87,7 +42,7 @@ pipeline = Pipeline([
 
 
 # =========================
-# 7. Learning Curve
+# 3. Learning Curve
 # =========================
 
 train_sizes, train_scores, val_scores = learning_curve(
@@ -101,7 +56,7 @@ train_sizes, train_scores, val_scores = learning_curve(
 
 
 # =========================
-# 8. Calculate mean and std
+# 4. Mean and std
 # =========================
 
 train_mean = train_scores.mean(axis=1)
@@ -112,7 +67,7 @@ val_std = val_scores.std(axis=1)
 
 
 # =========================
-# 9. Plot
+# 5. Plot
 # =========================
 
 plt.plot(
@@ -127,18 +82,12 @@ plt.plot(
     label="Validation score"
 )
 
-
-# Training variation
-
 plt.fill_between(
     train_sizes,
     train_mean - train_std,
     train_mean + train_std,
     alpha=0.2
 )
-
-
-# Validation variation
 
 plt.fill_between(
     train_sizes,
@@ -147,48 +96,47 @@ plt.fill_between(
     alpha=0.2
 )
 
-
-# =========================
-# 10. Labels
-# =========================
-
 plt.xlabel("Training examples")
 plt.ylabel("Accuracy")
 plt.title("Learning Curve")
-
 plt.legend()
 plt.grid()
 
 plt.savefig("learning_curves.png")
-
 plt.show()
 
 
 # =========================
-# 11. sinal test accyracy
-# =========================
-X_test = test["Text"]
-y_test = test["Category"]
-
-X_test_tfidf = vectorizer.transform(X_test)
-
-y_test_pred = model.predict(X_test_tfidf)
-
-test_accuracy = accuracy_score(y_test, y_test_pred)
-
-print("Final test accuracy =", test_accuracy)
-
-# =========================
-# 12. Train final pipeline
+# 6. Train final model
 # =========================
 
 pipeline.fit(X, y)
 
 
 # =========================
-# 13. Save final pipeline
+# 7. Final test accuracy
 # =========================
 
-joblib.dump(pipeline, "topic_classifier.pkl")
+X_test = test["Text"]
+y_test = test["Category"]
+
+y_test_pred = pipeline.predict(X_test)
+
+test_accuracy = accuracy_score(
+    y_test,
+    y_test_pred
+)
+
+print("Final test accuracy =", test_accuracy)
+
+
+# =========================
+# 8. Save model
+# =========================
+
+joblib.dump(
+    pipeline,
+    "topic_classifier.pkl"
+)
 
 print("Model saved successfully.")

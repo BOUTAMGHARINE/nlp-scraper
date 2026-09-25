@@ -6,8 +6,6 @@ import datetime
 
 
 
-
-
 url1 = "https://feeds.bbci.co.uk/news/rss.xml"
 url2 = "https://feeds.bbci.co.uk/news/world/rss.xml"
 url3="https://feeds.bbci.co.uk/news/uk/rss.xml"
