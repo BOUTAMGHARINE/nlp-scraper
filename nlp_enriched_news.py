@@ -4,10 +4,42 @@ import spacy
 import joblib
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+from sentence_transformers import SentenceTransformer
 
 
 
-
+environmental_keywords = [
+    "oil spill",
+    "chemical spill",
+    "chemical leak",
+    "toxic leak",
+    "toxic waste",
+    "hazardous waste",
+    "industrial waste",
+    "illegal dumping",
+    "waste dumping",
+    "water pollution",
+    "water contamination",
+    "soil contamination",
+    "air pollution",
+    "toxic pollution",
+    "industrial pollution",
+    "chemical contamination",
+    "oil contamination",
+    "marine pollution",
+    "ocean pollution",
+    "groundwater contamination",
+    "deforestation",
+    "illegal deforestation",
+    "forest destruction",
+    "habitat destruction",
+    "environmental contamination",
+    "industrial contamination",
+    "toxic chemicals",
+    "hazardous chemicals",
+    "chemical discharge",
+    "industrial discharge"
+]
 
 
 
@@ -68,6 +100,59 @@ texts = (
     + df["body"].fillna("")
 )
 df["Sentiment"] = texts.apply(get_sentiment)
+
+
+
+# embedding && Scandal detection
+
+
+
+def get_org_sentences(title, body):
+    text = f"{title} {body}"
+
+    doc = nlp(text)
+
+    sentences = []
+
+    for sent in doc.sents:
+        has_org = any(ent.label_ == "ORG" for ent in sent.ents)
+
+        if has_org:
+            sentences.append(sent.text.strip())
+
+    return sentences
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+environmental_keywords_embeddings = model.encode(environmental_keywords)
+
+
+df["org_sentences"] = df.apply(
+    lambda row: get_org_sentences(row["title"], row["body"]),
+    axis=1
+)
+
+print(df.loc[0, "body"])
+print(df.loc[0, "org_sentences"])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 
+
 
 
 
