@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated data
+data/*.csv
+data/*.json
+
+# Generated results
+results/*.csv
+results/*.pkl
+results/*.joblib
+results/*.png
+
+# NLP / ML caches
+.cache/
+hf_cache/
+sentence_transformers/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.logvenv/
+.venv/
