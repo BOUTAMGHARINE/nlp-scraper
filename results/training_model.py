@@ -11,9 +11,7 @@ import matplotlib.pyplot as plt
 import joblib
 
 
-# =========================
 # 1. Load data
-# =========================
 
 train = pd.read_csv("../data/train.csv")
 test = pd.read_csv("../data/test.csv")
@@ -22,9 +20,7 @@ X = train["Text"]
 y = train["Category"]
 
 
-# =========================
 # 2. Create Pipeline
-# =========================
 #  TF-IDF preprocessing &&  LogisticRegression() modul
 pipeline = Pipeline([
     (
@@ -41,9 +37,7 @@ pipeline = Pipeline([
 ])
 
 
-# =========================
 # 3. Learning Curve
-# =========================
 
 train_sizes, train_scores, val_scores = learning_curve(
     pipeline,
@@ -55,9 +49,7 @@ train_sizes, train_scores, val_scores = learning_curve(
 )
 
 
-# =========================
 # 4. Mean and std
-# =========================
 
 train_mean = train_scores.mean(axis=1)
 val_mean = val_scores.mean(axis=1)
@@ -66,9 +58,7 @@ train_std = train_scores.std(axis=1)
 val_std = val_scores.std(axis=1)
 
 
-# =========================
 # 5. Plot
-# =========================
 
 plt.plot(
     train_sizes,
@@ -106,16 +96,12 @@ plt.savefig("learning_curves.png")
 plt.show()
 
 
-# =========================
 # 6. Train final model
-# =========================
 
 pipeline.fit(X, y)
 
 
-# =========================
 # 7. Final test accuracy
-# =========================
 
 X_test = test["Text"]
 y_test = test["Category"]
@@ -130,9 +116,7 @@ test_accuracy = accuracy_score(
 print("Final test accuracy =", test_accuracy)
 
 
-# =========================
 # 8. Save model
-# =========================
 
 joblib.dump(
     pipeline,
